@@ -21,7 +21,7 @@
 #define DFS_I_BUFFER_SIZE (1024 * (DFS_I_EVENT_SIZE + 16))
 
 /** An inotify callback method **/
-typedef void (*InotifyCallback)(uint, const std::string&, void*);
+typedef void (*InotifyCallback)(uint, const std::string&, void*);;
 
 /** A file descriptor type **/
 typedef int FileDescriptor;
