@@ -7,43 +7,37 @@ package dfs_service;
 
 service DFSService {
 
-    // Add your service calls here
-
-    // 1. REQUIRED (Parts 1 & 2): A method to store files on the server
+    //method to store files on the server
     rpc fileUploadRequest(stream UploadRequest) returns (UploadResponse);
 
-    // 2. REQUIRED (Parts 1 & 2): A method to fetch files from the server
+    //method to fetch files from the server
     rpc fileFetcher(FetchRequest) returns (stream FetchResponse);
 
-    // 3. REQUIRED (Parts 1 & 2): A method to list all files on the server
+    //method to list all files on the server
     rpc fileLister(google.protobuf.Empty) returns (ListResponse);
 
-    // 4. REQUIRED (Parts 1 & 2): A method to get the status of a file on the server
+    //method to get the status of a file on the server
     rpc fileStatuser(StatusRequest) returns (StatusResponse);
 
-    // 5. REQUIRED (Part 2 only): A method to request a write lock from the server
+    //method to request a write lock from the server
     rpc fileGetLocker(GetLockRequest) returns (google.protobuf.Empty);
-    // 6. REQUIRED (Part 2 only): A method named CallbackList to handle asynchronous file listing requests
-    //                            from a client. This method should return a listing of files along with their
-    //                            attribute information. The expected attribute information should include name,
-    //                            size, modified time, and creation time.
+    //method named CallbackList to handle asynchronous file listing requests
+    //from a client. This method should return a listing of files along with their
+    //attribute information. The expected attribute information should include name,
+    //size, modified time, and creation time.
     rpc CallbackList(CBLRequest) returns (CBLResponse);
 
-    // 7. REQUIRED (Part 2 only): A method to delete a file from the server
+    //method to delete a file from the server
     rpc fileDeleter(DeleteRequest) returns (google.protobuf.Empty);
 
-    // 8. Any other methods you deem necessary to complete the tasks of this assignment
-    //I deem these necessary
-    // 8.1 ADDED by Alex (Part 2 only): A method that sends the check sum of a file
+    // method that sends the check sum of a file
     rpc fileCheckSum(CheckSumRequest) returns (CheckSumResponse);
 
-    // 8.2 ADDED by yours truly (Part 2 only): A method to get timestamp of a file
+    // method to get timestamp of a file
     rpc fileSameTimestamp(TimeStampRequest) returns (TimeStampResponse);
 
 
 }
-
-// Alex's Messages. Yes it's repetitive but it keeps it simple
 
 //Upload request msg
 message UploadRequest{
