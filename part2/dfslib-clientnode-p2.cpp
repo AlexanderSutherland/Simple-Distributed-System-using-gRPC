@@ -616,14 +616,7 @@ void DFSClientNodeP2::HandleCallbackList() {
     }
 }
 
-/**
- * This method will start the callback request to the server, requesting
- * an update whenever the server sees that files have been modified.
- *
- * We're making use of a template function here, so that we can keep some
- * of the more intricate workings of the async process out of the way, and
- * give you a chance to focus more on the project's requirements.
- */
+
 void DFSClientNodeP2::InitCallbackList() {
     CallbackList<FileRequestType, FileListResponseType>();
 }
