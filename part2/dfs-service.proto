@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+package dfs_service;
+
+service DFSService {
+
+    // Add your service calls here
+
+    // 1. REQUIRED (Parts 1 & 2): A method to store files on the server
+    rpc fileUploadRequest(stream UploadRequest) returns (UploadResponse);
+
+    // 2. REQUIRED (Parts 1 & 2): A method to fetch files from the server
+    rpc fileFetcher(FetchRequest) returns (stream FetchResponse);
+
+    // 3. REQUIRED (Parts 1 & 2): A method to list all files on the server
+    rpc fileLister(google.protobuf.Empty) returns (ListResponse);
+
+    // 4. REQUIRED (Parts 1 & 2): A method to get the status of a file on the server
+    rpc fileStatuser(StatusRequest) returns (StatusResponse);
+
+    // 5. REQUIRED (Part 2 only): A method to request a write lock from the server
+    rpc fileGetLocker(GetLockRequest) returns (google.protobuf.Empty);
+    // 6. REQUIRED (Part 2 only): A method named CallbackList to handle asynchronous file listing requests
+    //                            from a client. This method should return a listing of files along with their
+    //                            attribute information. The expected attribute information should include name,
+    //                            size, modified time, and creation time.
+    rpc CallbackList(CBLRequest) returns (CBLResponse);
+
+    // 7. REQUIRED (Part 2 only): A method to delete a file from the server
+    rpc fileDeleter(DeleteRequest) returns (google.protobuf.Empty);
+
+    // 8. Any other methods you deem necessary to complete the tasks of this assignment
+    //I deem these necessary
+    // 8.1 ADDED by Alex (Part 2 only): A method that sends the check sum of a file
+    rpc fileCheckSum(CheckSumRequest) returns (CheckSumResponse);
+
+    // 8.2 ADDED by yours truly (Part 2 only): A method to get timestamp of a file
+    rpc fileSameTimestamp(TimeStampRequest) returns (TimeStampResponse);
+
+
+}
+
+// Alex's Messages. Yes it's repetitive but it keeps it simple
+
+//Upload request msg
+message UploadRequest{
+    string fileName = 1;
+    bytes fileChunk = 2;
+    uint32 fileChunkSize = 3;
+    uint32 fileSize = 4;
+    string ClientID = 5;
+    google.protobuf.Timestamp CFilemTime = 6;
+    uint32 CFileCheckSum = 7;
+}
+
+//Response msg
+message UploadResponse{
+    string fileName = 1;
+}
+
+//Fetch Request Msg
+message FetchRequest{
+    bool ClientHasFile = 1;
+    string fileName = 2;
+    google.protobuf.Timestamp CFilemTime = 3;
+    uint32 CFileCheckSum = 4;
+}
+
+//Fetch Response Msg
+message FetchResponse{
+    bytes content = 1;
+    uint32 fileSize = 2;
+    bool CopyFile = 3;
+}
+
+//List Response Msg
+message ListResponse{
+    uint32 ListLength = 1;
+    repeated ListElementResponse file = 2;
+}
+
+//Info needed for each file in client list function
+message ListElementResponse{
+    string fileName = 1;
+    google.protobuf.Timestamp mTime = 2;
+}
+
+//Status Request Msg
+message StatusRequest{
+    string fileName = 1;
+}
+
+//Status Response Msg
+message StatusResponse{
+    bool fileExists = 1;
+    string fileName = 2;
+    int32 fileSize = 3;
+    google.protobuf.Timestamp mTime = 4;
+    google.protobuf.Timestamp cTime = 5;
+    uint32 fileCheckSum = 6;
+}
+
+message GetLockRequest{
+    string clientID = 1;
+    string fileName = 2;
+
+}
+
+
+message CBLRequest{
+    string name = 1;
+
+}
+
+message CBLResponse{
+    uint32 CBListLength = 1;
+    repeated CBLElementResponse fileInfo = 2;   
+}
+
+//Info needed for each file in client list function
+message CBLElementResponse{
+    string fileName = 1;
+    int32 fileSize = 2;
+    google.protobuf.Timestamp mTime = 3;
+    google.protobuf.Timestamp cTime = 4;
+    uint32 fileCheckSum = 5;
+}
+
+
+//Delete Request Msg
+message DeleteRequest{
+    string fileName = 1;
+    string clientID = 2;
+}
+
+message CheckSumRequest{
+    string fileName = 1;
+    uint32 checkValue = 2;
+    string clientID = 3;
+}
+
+message CheckSumResponse{
+    string fileName = 1;
+    uint32 checkValue = 2;
+}
+
+message TimeStampRequest{
+    string fileName = 1;
+    google.protobuf.Timestamp mTime = 5;
+
+}
+
+message TimeStampResponse{
+    bool SameTimeStamp = 1;
+
+}
