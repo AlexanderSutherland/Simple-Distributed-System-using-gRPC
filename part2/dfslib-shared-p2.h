@@ -16,12 +16,6 @@
 #include "proto-src/dfs-service.grpc.pb.h"
 
 
-//
-// STUDENT INSTRUCTION
-//
-// The following defines and methods must be left as-is for the
-// structural components provided to work.
-//
 #define DFS_RESET_TIMEOUT 3000
 #define DFS_I_EVENT_SIZE (sizeof(struct inotify_event))
 #define DFS_I_BUFFER_SIZE (1024 * (DFS_I_EVENT_SIZE + 16))
@@ -51,11 +45,6 @@ struct EventStruct {
     void* instance;
 };
 
-//
-// STUDENT INSTRUCTION:
-//
-// Add any additional shared code here
-//
 
 
 #endif
