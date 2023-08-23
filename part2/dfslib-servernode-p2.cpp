@@ -37,42 +37,13 @@ typedef struct fileMutexInfo{
     std::string ClientID;
 }fileMutexInfo;
 
-//
-// STUDENT INSTRUCTION:
-//
-// Change these "using" aliases to the specific
-// message types you are using in your 'dfs-service.proto' file
-// to indicate a file request and a listing of files from the server
-//
+
 using FileRequestType = dfs_service::CBLRequest;
 using FileListResponseType = dfs_service::CBLResponse;
 
 extern dfs_log_level_e DFS_LOG_LEVEL;
 
-//
-// STUDENT INSTRUCTION:
-//
-// As with Part 1, the DFSServiceImpl is the implementation service for the rpc methods
-// and message types you defined in your 'dfs-service.proto' file.
-//
-// You may start with your Part 1 implementations of each service method.
-//
-// Things to consider for Part 2:
-//
-// - How will you implement the write lock at the server level?
-// - How will you keep track of which client has a write lock for a file?
-//      - Note that we've provided a preset client_id in DFSClientNode that generates
-//        a client id for you. You can pass that to the server to identify the current client.
-// - How will you release the write lock?
-// - How will you handle a store request for a client that doesn't have a write lock?
-// - When matching files to determine similarity, you should use the 'file_checksum' method we've provided.
-//      - Both the client and server have a pre-made 'crc_table' variable to speed things up.
-//      - Use the 'file_checksum' method to compare two files, similar to the following:
-//
-//          std::uint32_t server_crc = dfs_file_checksum(filepath, &this->crc_table);
-//
-//      - Hint: as the crc checksum is a simple integer, you can pass it around inside your message types.
-//
+
 class DFSServiceImpl final :
     public DFSService::WithAsyncMethod_CallbackList<DFSService::Service>,
         public DFSCallDataManager<FileRequestType , FileListResponseType> {
@@ -321,20 +292,6 @@ public:
         this->runner.Run();
     }
 
-    /**
-     * Request callback for asynchronous requests
-     *
-     * This method is called by the DFSCallData class during
-     * an asynchronous request call from the client.
-     *
-     * Students should not need to adjust this.
-     *
-     * @param context
-     * @param request
-     * @param response
-     * @param cq
-     * @param tag
-     */
     void RequestCallback(grpc::ServerContext* context,
                          FileRequestType* request,
                          grpc::ServerAsyncResponseWriter<FileListResponseType>* response,
@@ -346,30 +303,8 @@ public:
 
     }
 
-    /**
-     * Process a callback request
-     *
-     * This method is called by the DFSCallData class when
-     * a requested callback can be processed. You should use this method
-     * to manage the CallbackList RPC call and respond as needed.
-     *
-     * See the STUDENT INSTRUCTION for more details.
-     *
-     * @param context
-     * @param request
-     * @param response
-     */
-    void ProcessCallback(ServerContext* context, FileRequestType* request, FileListResponseType* response) {
 
-        //
-        // STUDENT INSTRUCTION:
-        //
-        // You should add your code here to respond to any CallbackList requests from a client.
-        // This function is called each time an asynchronous request is made from the client.
-        //
-        // The client should receive a list of files or modifications that represent the changes this service
-        // is aware of. The client will then need to make the appropriate calls based on those changes.
-        //
+    void ProcessCallback(ServerContext* context, FileRequestType* request, FileListResponseType* response) {
 
         dfs_log(LL_SYSINFO) << "ServerSide | Processing Callback";
         Status cblStatusMsg = CallbackList(context, request, response);
@@ -390,17 +325,6 @@ public:
      */
     void ProcessQueuedRequests() {
         while(true) {
-
-            //
-            // STUDENT INSTRUCTION:
-            //
-            // You should add any synchronization mechanisms you may need here in
-            // addition to the queue management. For example, modified files checks.
-            //
-            // Note: you will need to leave the basic queue structure as-is, but you
-            // may add any additional code you feel is necessary.
-            //
-
 
             // Guarded section for queue
             {
@@ -424,13 +348,6 @@ public:
             }
         }
     }
-
-    //
-    // STUDENT INSTRUCTION:
-    //
-    // Add your additional code here, including
-    // the implementations of your rpc protocol methods.
-    //
 
 
     Status fileUploadRequest(ServerContext* context, ServerReader<dfs_service::UploadRequest>* sreader, dfs_service::UploadResponse* fileUploadRespond) override{      
@@ -747,12 +664,6 @@ public:
 
         dfs_log(LL_SYSINFO) << "-----------------------------------------------------------------";
         dfs_log(LL_SYSINFO) << "ServerSide | Accepting Client Request to send call back list of files in directory";
-        /*
-        if(context->IsCancelled()){
-            dfs_log(LL_SYSINFO) << "ServerSide | Cancelling CallbackList";
-            return Status(StatusCode::DEADLINE_EXCEEDED, "Deadline exceeded ir Client cancelled, prematurely ending request");
-        }
-        */
         dfs_log(LL_SYSINFO) << "Client has not cancelled request";
 
         //Create directory path to look in. Recreated variable incase I needed to edit the string
@@ -933,20 +844,7 @@ public:
 
 };
 
-//
-// STUDENT INSTRUCTION:
-//
-// The following three methods are part of the basic DFSServerNode
-// structure. You may add additional methods or change these slightly
-// to add additional startup/shutdown routines inside, but be aware that
-// the basic structure should stay the same as the testing environment
-// will be expected this structure.
-//
-/**
- * The main server node constructor
- *
- * @param mount_path
- */
+
 DFSServerNode::DFSServerNode(const std::string &server_address,
         const std::string &mount_path,
         int num_async_threads,
@@ -973,8 +871,3 @@ void DFSServerNode::Start() {
     service.Run();
 }
 
-//
-// STUDENT INSTRUCTION:
-//
-// Add your additional definitions here
-//
