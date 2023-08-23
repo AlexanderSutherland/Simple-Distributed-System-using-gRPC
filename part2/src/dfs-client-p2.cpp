@@ -22,7 +22,7 @@
 
 DFSClient::DFSClient() {}
 
-DFSClient::~DFSClient() noexcept { this->Unmount(); }
+DFSClient::~DFSClient() noexcept { this->Unmount(); };
 
 void DFSClient::ProcessCommand(const std::string &command, const std::string &filename) {
 
